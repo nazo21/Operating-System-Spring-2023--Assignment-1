@@ -7,7 +7,7 @@ using namespace std;
 void *consumer(void *arg) {
     for (int i = 0; i < MAX; i++) {
         // Wait for a full slot on the table
-        sem_wait(&table.full_slots);
+        sem_wait(&table.full);
 
         // Acquire the lock
         pthread_mutex_lock(&table.lock);
@@ -24,27 +24,27 @@ void *consumer(void *arg) {
 
         // Release the lock and let the slot know it is empty
         pthread_mutex_unlock(&table.lock);
-        sem_post(&table.empty_slots);
+        sem_post(&table.empty);
     }
     pthread_exit(NULL);
 }
 
 int main() {
     // Initialize the synchronization variables
-    sem_init(&table.empty_slots, 0, SIZE_DATA);
-    sem_init(&table.full_slots, 0, 0);
+    sem_init(&table.empty, 0, SIZE_DATA);
+    sem_init(&table.full, 0, 0);
     pthread_mutex_init(&table.lock, NULL);
 
     // consumer threads
-    pthread_t cons_thread;
-    pthread_create(&cons_thread, NULL, consumer, NULL);
+    pthread_t cons_thd;
+    pthread_create(&cons_thd, NULL, consumer, NULL);
 
     // Wait for the threads to finish
-       pthread_join(cons_thread, NULL);
+       pthread_join(cons_thd, NULL);
 
     // Clean up the synchronization variables
-    sem_destroy(&table.empty_slots);
-    sem_destroy(&table.full_slots);
+    sem_destroy(&table.empty);
+    sem_destroy(&table.full);
     pthread_mutex_destroy(&table.lock);
 
     return 0;
