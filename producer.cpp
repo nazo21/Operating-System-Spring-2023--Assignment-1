@@ -8,11 +8,10 @@ using namespace std;
 void *producer(void *arg) {
     int item = 1;
     for (int i = 0; i < MAX; i++) {
-        // Wait for an empty slot on the table
-        sem_wait(&table.empty_slots);
+       
+        sem_wait(&table.empty);  // Wait for an empty slot on the table
 
-        // Acquire the lock to access the table
-        pthread_mutex_lock(&table.lock);
+        pthread_mutex_lock(&table.lock); // Acquire the lock to access the table
 
         // Put the item on the table
         for (int j = 0; j < SIZE_DATA; j++) {
@@ -26,27 +25,27 @@ void *producer(void *arg) {
 
         // Release the lock and signal that a slot on the table is now full
         pthread_mutex_unlock(&table.lock);
-        sem_post(&table.full_slots);
+        sem_post(&table.full);
     }
     pthread_exit(NULL);
 }
 
 int main() {
     // Initialize the synchronization variables
-    sem_init(&table.empty_slots, 0, SIZE_DATA);
-    sem_init(&table.full_slots, 0, 0);
+    sem_init(&table.empty, 0, SIZE_DATA);
+    sem_init(&table.full, 0, 0);
     pthread_mutex_init(&table.lock, NULL);
 
     // Create the producer and consumer threads
-    pthread_t prod_thread;
-    pthread_create(&prod_thread, NULL, producer, NULL);
+    pthread_t prod_thd;
+    pthread_create(&prod_thd, NULL, producer, NULL);
 
     // Wait for the threads to finish
-    pthread_join(prod_thread, NULL);
+    pthread_join(prod_thd, NULL);
 
     // Clean up the synchronization variables
-    sem_destroy(&table.empty_slots);
-    sem_destroy(&table.full_slots);
+    sem_destroy(&table.empty);
+    sem_destroy(&table.full);
     pthread_mutex_destroy(&table.lock);
 
     return 0;
