@@ -6,11 +6,9 @@ using namespace std;
 
 void *consumer(void *arg) {
     for (int i = 0; i < MAX; i++) {
-        // Wait for a full slot on the table
-        sem_wait(&table.full);
-
-        // Acquire the lock
-        pthread_mutex_lock(&table.lock);
+        
+        sem_wait(&table.full); // Wait for a full slot on the table
+        pthread_mutex_lock(&table.lock); // Acquire the lock
 
         // Take an item off the table
         for (int j = 0; j < SIZE_DATA; j++) {
