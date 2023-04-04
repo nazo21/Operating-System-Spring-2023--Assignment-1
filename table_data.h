@@ -5,13 +5,13 @@
 
 // Define the table size and the number of items to be produced
 #define SIZE_DATA 2
-#define MAX 4
+#define MAX 5
 
 // Define a structure for the Data table and its synchronization variables
 struct Table {
     int items[SIZE_DATA];
-    sem_t empty_slots;
-    sem_t full_slots;
+    sem_t empty;
+    sem_t full;
     pthread_mutex_t lock;
 } table;
 
