@@ -3,7 +3,9 @@
 #include "table_data.h"
 
 using namespace std;
-
+/*
+ This program wasn't working concurently when I implemented shared memory    
+*/
 void *consumer(void *arg) {
     for (int i = 0; i < MAX; i++) {
         
