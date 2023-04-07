@@ -1,11 +1,13 @@
 #include <pthread.h>
 #include <iostream>
 #include "table_data.h"
-
-
+/* 
+  Nazeer Ahmad for OS. 
+        I should've implemented shared memory in the header file then i
+*/
 using namespace std;
 
-void *producer(void *arg) {
+void *producer(void *nun) {
     int item = 1;
     for (int i = 0; i < MAX; i++) {
        
@@ -16,9 +18,9 @@ void *producer(void *arg) {
         // Put the item on the table
         for (int j = 0; j < SIZE_DATA; j++) {
             if (table.items[j] == 0) {
-                table.items[j] = item;
+                table.items[j] = item; // add item to table
                 cout << "Produced item " << item << endl;
-                item++;
+                item++; // produce till 2
                 break;
             }
         }
