@@ -25,3 +25,5 @@ Problem 3: I want more produce but as more is produced then consumer has to keep
 
 
 My Takeaway: 
+
+If everything is in one file then the program is straight forward but when it is in two executables there are problems of different instances and that is the role of shared memory to make these two process run concurrently and effectively using the shared data. 
