@@ -3,31 +3,35 @@
 #include <semaphore.h>
 
 using namespace std;
+/*
+   This is the program where if run it will work intended
+   However where I went wrong is I should've implemented a while(MAX){Produce two at a time in table}
 
+*/
 // Define the table size and the number of items to be produced
-#define TABLE_SIZE 4
-#define NUM_ITEMS 6
+#define SIZE 2
+#define ITEMS 6
 
 // Define a structure for the table and its associated synchronization variables
 struct Table {
-    int items[TABLE_SIZE];
-    sem_t empty_slots;
-    sem_t full_slots;
+    int items[SIZE];
+    sem_t empty;
+    sem_t full;
     pthread_mutex_t lock;
 } table;
 
 // Define the producer thread function
-void *producer(void *arg) {
+void *producer(void *nun) {
     int item = 1;
-    for (int i = 0; i < NUM_ITEMS; i++) {
+    for (int i = 0; i < ITEMS; i++) {
         // Wait for an empty slot on the table
-        sem_wait(&table.empty_slots);
+        sem_wait(&table.empty);
 
         // Acquire the lock to access the table
         pthread_mutex_lock(&table.lock);
 
         // Put the item on the table
-        for (int j = 0; j < TABLE_SIZE; j++) {
+        for (int j = 0; j < SIZE; j++) {
             if (table.items[j] == 0) {
                 table.items[j] = item;
                 cout << "Produced item " << item << endl;
@@ -38,22 +42,22 @@ void *producer(void *arg) {
 
         // Release the lock and signal that a slot on the table is now full
         pthread_mutex_unlock(&table.lock);
-        sem_post(&table.full_slots);
+        sem_post(&table.full);
     }
     pthread_exit(NULL);
 }
 
 // Define the consumer thread function
-void *consumer(void *arg) {
-    for (int i = 0; i < NUM_ITEMS; i++) {
+void *consumer(void *cnun) {
+    for (int i = 0; i < ITEMS; i++) {
         // Wait for a full slot on the table
-        sem_wait(&table.full_slots);
+        sem_wait(&table.full);
 
         // Acquire the lock to access the table
         pthread_mutex_lock(&table.lock);
 
         // Take an item off the table
-        for (int j = 0; j < TABLE_SIZE; j++) {
+        for (int j = 0; j < SIZE; j++) {
             if (table.items[j] != 0) {
                 int item = table.items[j];
                 table.items[j] = 0;
@@ -64,15 +68,15 @@ void *consumer(void *arg) {
 
         // Release the lock and signal that a slot on the table is now empty
         pthread_mutex_unlock(&table.lock);
-        sem_post(&table.empty_slots);
+        sem_post(&table.empty);
     }
     pthread_exit(NULL);
 }
 
 int main() {
     // Initialize the synchronization variables
-    sem_init(&table.empty_slots, 0, TABLE_SIZE);
-    sem_init(&table.full_slots, 0, 0);
+    sem_init(&table.empty, 0, SIZE);
+    sem_init(&table.full, 0, 0);
     pthread_mutex_init(&table.lock, NULL);
 
     // Create the producer and consumer threads
@@ -85,8 +89,8 @@ int main() {
     pthread_join(consumer_thread, NULL);
 
     // Destroy the synchronization variables
-    sem_destroy(&table.empty_slots);
-    sem_destroy(&table.full_slots);
+    sem_destroy(&table.empty);
+    sem_destroy(&table.full);
     pthread_mutex_destroy(&table.lock);
 
     return 0;
