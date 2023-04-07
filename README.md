@@ -14,6 +14,9 @@ Overview:
 We have a Producer-Consumer Problem where the table can only hold two items at a time before the consumer takes an item then the producer can produce another item into the table for a total of 6 times. We will use shared data in the header file to define where the semaphores and p_threads mutex function
 Since the prompt specified two executables or two process we will separate the functions into two and use pthreads to run them at the same time. 
 
+We have the standard Producer-Consumer, then we needed implemented Semaphores in order with wait and signal and empty and full to satisfy mutual exclusion then we will use mutex to have one function lock the process then once the job has been done it will unlock the process and signal the job has been completed
+
+The main functions intializes the values and then the threads are created for prod and cons then wait unti the threads are finish then the variables are destroyed with sem_destroy for memory usage.
 
 
 
