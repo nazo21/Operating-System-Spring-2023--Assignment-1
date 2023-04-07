@@ -26,6 +26,13 @@ Problem 1: Consumer function isn't working
 Problem 2: I am not implementing Shared Memory properly
 Problem 3: I want more produce but as more is produced then consumer has to keep up
 
+Solutions:
+
+Use a while function or specify how many threads should be created in total
+
+Maybe adding the shared memory to it would make it better, I didn't implemented it properly because what would occur is the consumer would constantly wait if the table is full but it never is because it is in a different instance than producer. 
+
+
 
 My Takeaway: 
 
