@@ -32,7 +32,58 @@ Use a while function or specify how many threads should be created in total
 
 Maybe adding the shared memory to it would make it better, I didn't implemented it properly because what would occur is the consumer would constantly wait if the table is full but it never is because it is in a different instance than producer. 
 
+Update:
+#include <fcntl.h>
+#include <sys/mman.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <unistd.h>
 
+#include <iostream>
+
+int main() {
+    const char* name = "/Prodcons"; // the name of the shared memory object
+    const int SIZE = 4096; // the size of the shared memory object
+    const char* message = "Hello, world!"; // the message to be written to the shared memory object
+
+    // Create the shared memory object
+    int fd = shm_open(name, O_CREAT | O_RDWR, 0666);
+    if (fd == -1) {
+        std::cerr << "shm_open failed" << std::endl;
+        return 1;
+    }
+
+    // Resize the shared memory object
+    if (ftruncate(fd, SIZE) == -1) {
+        std::cerr << "ftruncate failed" << std::endl;
+        return 1;
+    }
+
+    // Map the shared memory object into the process's address space
+    char* addr = (char*)mmap(NULL, SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+    if (addr == MAP_FAILED) {
+        std::cerr << "mmap failed" << std::endl;
+        return 1;
+    }
+
+    // Write the message to the shared memory object
+    std::strcpy(addr, message);
+
+    // Unmap the shared memory object
+    if (munmap(addr, SIZE) == -1) {
+        std::cerr << "munmap failed" << std::endl;
+        return 1;
+    }
+
+    // Close the shared memory object
+    if (close(fd) == -1) {
+        std
+      
+      shm_unlink(shmpath);
+
+}
+
+I figure out what the implementation is, We use the following code above to make sure the other process is in communication then insert our consumer code in between the first part and before unlike. Then modfy the functions to adapt to the style. Most likely, we need to re-evalue our header file and main function
 
 My Takeaway: 
 
